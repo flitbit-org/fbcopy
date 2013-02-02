@@ -3,6 +3,7 @@
 #endregion
 
 using System;
+using FlitBit.Core.Factory;
 
 namespace FlitBit.Copy
 {
@@ -19,12 +20,12 @@ namespace FlitBit.Copy
 		/// <param name="target"></param>
 		/// <param name="source"></param>
 		/// <param name="kind"></param>
-		/// <param name="container"></param>
-		public void CopyTo(T target, S source, CopyKind kind, IoC.IContainer container)
+		/// <param name="factory"></param>
+		public void CopyTo(T target, S source, CopyKind kind, IFactory factory)
 		{
 			if (kind == CopyKind.Loose)
 			{
-				Copier<T>.LooseCopyTo(target, source, container);
+				Copier<T>.LooseCopyTo(target, source, factory);
 			}
 			else throw new NotImplementedException();
 		}

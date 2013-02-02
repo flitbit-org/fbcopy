@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using FlitBit.Emit;
-using FlitBit.IoC;
+using FlitBit.Core.Factory;
 
 namespace FlitBit.Copy
 {
@@ -25,40 +25,33 @@ namespace FlitBit.Copy
 		/// <typeparam name="S"></typeparam>
 		/// <param name="target"></param>
 		/// <param name="source"></param>
-		/// <param name="container"></param>
-		public static void LooseCopyTo<S>(T target, S source, IContainer container)
+		/// <param name="factory"></param>
+		public static void LooseCopyTo<S>(T target, S source, IFactory factory)
 		{
-			LooseCopyHelper<S>.LooseCopyTo(target, source, container);
+			LooseCopyHelper<S>.LooseCopyTo(target, source, factory);
 		}
 
-		internal static void RegisterAnonymousSourceCopierForTarget<A>()
-		{
-			Container.Root.ForType<ICopier<A, T>>()
-				.Register((c, p) => new AnonymousSourceCopier<A,T>())
-				.ResolveAnInstancePerRequest()
-				.End();
-		}
 		
 		private static class LooseCopyHelper<S>
 		{
-			static readonly Lazy<Action<T, S, IContainer>> __looseCopy = new Lazy<Action<T, S, IContainer>>(GeneratePerformLooseCopy, LazyThreadSafetyMode.ExecutionAndPublication);			
+			static readonly Lazy<Action<T, S, IFactory>> __looseCopy = new Lazy<Action<T, S, IFactory>>(GeneratePerformLooseCopy, LazyThreadSafetyMode.ExecutionAndPublication);
 
-			internal static void LooseCopyTo(T target, S source, IContainer container)
+			internal static void LooseCopyTo(T target, S source, IFactory factory)
 			{
 				Contract.Requires<ArgumentNullException>(target != null);
 				Contract.Requires<ArgumentNullException>(source != null);
-				Contract.Requires<ArgumentNullException>(container != null);
+				Contract.Requires<ArgumentNullException>(factory != null);
 				
-				__looseCopy.Value(target, source, container);
+				__looseCopy.Value(target, source, factory);
 			}
 
-			internal static Action<T, S, IContainer> GeneratePerformLooseCopy()
+			internal static Action<T, S, IFactory> GeneratePerformLooseCopy()
 			{
 				var method = new DynamicMethod(String.Format("LooseCopyTo", typeof(T).Name)
 					 , MethodAttributes.Public | MethodAttributes.Static
 					 , CallingConventions.Standard
 					 , null
-					 , new Type[] { typeof(T), typeof(S), typeof(IContainer) }
+					 , new Type[] { typeof(T), typeof(S), typeof(IFactory) }
 					 , typeof(S)
 					 , false
 					 );
@@ -102,7 +95,7 @@ namespace FlitBit.Copy
 				il.Return();
 
 				// Create the delegate
-				return (Action<T, S, IContainer>)method.CreateDelegate(typeof(Action<T, S, IContainer>));
+				return (Action<T, S, IFactory>)method.CreateDelegate(typeof(Action<T, S, IFactory>));
 			}
 		}		
 	}

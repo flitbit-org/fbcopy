@@ -89,14 +89,13 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FlitBit.Core">
-      <HintPath>..\packages\FlitBit.Core.2.4.4.33852\lib\net40\FlitBit.Core.dll</HintPath>
+    <Reference Include="FlitBit.Core, Version=2.4.8.39627, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FlitBit.Core.2.4.8.39627\lib\net40\FlitBit.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FlitBit.Emit">
-      <HintPath>..\packages\FlitBit.Emit.2.4.4.26517\lib\net40\FlitBit.Emit.dll</HintPath>
-    </Reference>
-    <Reference Include="FlitBit.IoC">
-      <HintPath>..\packages\FlitBit.IoC.2.4.1.45015\lib\net40\FlitBit.IoC.dll</HintPath>
+    <Reference Include="FlitBit.Emit, Version=2.5.1.43340, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FlitBit.Emit.2.5.1.43340\lib\net40\FlitBit.Emit.dll</HintPath>
     </Reference>
     <Reference Include="FlitBit.Wireup">
       <HintPath>..\packages\FlitBit.Wireup.2.4.0.35609\lib\net40\FlitBit.Wireup.dll</HintPath>
@@ -123,7 +122,6 @@
     <Compile Include="CopierTypeFactory.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ICopier.S.T.cs" />
-    <Compile Include="ICopierExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,8 +5,8 @@
 using System;
 using System.Reflection;
 using FlitBit.Emit;
-using FlitBit.IoC;
-using FlitBit.IoC.Stereotype;
+using FlitBit.Emit.Meta;
+using FlitBit.Core.Meta;
 
 namespace FlitBit.Copy
 {
@@ -14,42 +14,36 @@ namespace FlitBit.Copy
 	/// Used by the framework too wireup copier implementations.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class)]
-	public class CopierAutoImplementAttribute : StereotypeAttribute
+	public class CopierAutoImplementAttribute : AutoImplementedAttribute
 	{
 		/// <summary>
 		/// Creates a new instance.
 		/// </summary>
 		public CopierAutoImplementAttribute()
-			: base(StereotypeBehaviors.AutoImplementedBehavior)
 		{
+			base.RecommemdedScope = InstanceScopeKind.ContainerScope;
 		}
-		
+
 		/// <summary>
-		/// Creates and registers a copier implementation.
+		/// Generates an instance of ICopier&lt;,>
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="container"></param>
-		/// <returns></returns>	
-		public override bool RegisterStereotypeImplementation<T>(IoC.IContainer container)
+		/// <param name="complete"></param>
+		/// <returns></returns>
+		public override bool GetImplementation<T>(Action<Type, Func<T>> complete)
 		{
-			RequireTypeIsInterface<T>();
-			Type source = typeof(T).GetGenericArguments()[0];
-			Type target = typeof(T).GetGenericArguments()[1];
+			var args = typeof(T).GetGenericArguments();
+			Type source = args[0];
+			Type target = args[1];
 
 			if (source.IsAnonymousType())
 			{
-				Type copierT = typeof(Copier<>).MakeGenericType(target);
-				MethodInfo registerAnonymousSourceCopierForTarget = copierT.GetGenericMethod("RegisterAnonymousSourceCopierForTarget", BindingFlags.Static | BindingFlags.NonPublic, 0, 1).MakeGenericMethod(source);
-				registerAnonymousSourceCopierForTarget.Invoke(null, Type.EmptyTypes);
+				var anon = typeof(AnonymousSourceCopier<,>).MakeGenericType(source, target);
+				complete(null, () => { return (T)Activator.CreateInstance(anon); });
 			}
 			else
 			{
-				Type concreteType = CopierTypeFactory.ConcreteType(source, target);
-
-				Container.Root.ForType<T>()
-					.Register(concreteType)
-					.ResolveAnInstancePerRequest()
-					.End();
+				complete(CopierTypeFactory.ConcreteType(source, target), null);
 			}
 			return true;
 		}

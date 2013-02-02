@@ -2,7 +2,7 @@
 // For licensing information see License.txt (MIT style licensing).
 #endregion
 
-using FlitBit.IoC;
+using FlitBit.Core.Factory;
 
 namespace FlitBit.Copy
 {
@@ -20,7 +20,7 @@ namespace FlitBit.Copy
 		/// <param name="target">the target object</param>
 		/// <param name="source">the source object</param>
 		/// <param name="kind">kind of copy (loose or strict)</param>
-		/// <param name="container">a container scope</param>
-		void CopyTo(T target, S source, CopyKind kind, IContainer container);
+		/// <param name="factory">a container scope</param>
+		void CopyTo(T target, S source, CopyKind kind, IFactory factory);
 	}
 }
