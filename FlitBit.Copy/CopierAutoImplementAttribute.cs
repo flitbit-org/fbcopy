@@ -7,6 +7,7 @@ using System.Reflection;
 using FlitBit.Emit;
 using FlitBit.Emit.Meta;
 using FlitBit.Core.Meta;
+using FlitBit.Core.Factory;
 
 namespace FlitBit.Copy
 {
@@ -28,9 +29,10 @@ namespace FlitBit.Copy
 		/// Generates an instance of ICopier&lt;,>
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="complete"></param>
+		/// <param name="factory">the requesting factory</param>
+		/// <param name="complete">callback upon completion</param>
 		/// <returns></returns>
-		public override bool GetImplementation<T>(Action<Type, Func<T>> complete)
+		public override bool GetImplementation<T>(IFactory factory, Action<Type, Func<T>> complete)
 		{
 			var args = typeof(T).GetGenericArguments();
 			Type source = args[0];
