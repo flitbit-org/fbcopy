@@ -90,13 +90,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FlitBit.Core">
-      <HintPath>..\packages\FlitBit.Core.2.4.11\lib\net40\FlitBit.Core.dll</HintPath>
+      <HintPath>..\packages\FlitBit.Core.2.5.0\lib\net40\FlitBit.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FlitBit.Emit">
-      <HintPath>..\packages\FlitBit.Emit.2.6.1\lib\net40\FlitBit.Emit.dll</HintPath>
+      <HintPath>..\packages\FlitBit.Emit.2.7.0\lib\net40\FlitBit.Emit.dll</HintPath>
     </Reference>
     <Reference Include="FlitBit.Wireup">
-      <HintPath>..\packages\FlitBit.Wireup.2.5.0\lib\net40\FlitBit.Wireup.dll</HintPath>
+      <HintPath>..\packages\FlitBit.Wireup.2.5.1\lib\net40\FlitBit.Wireup.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
