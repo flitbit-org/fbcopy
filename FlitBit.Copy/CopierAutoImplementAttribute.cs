@@ -7,7 +7,6 @@ using System.Reflection;
 using FlitBit.Emit;
 using FlitBit.Core.Meta;
 using FlitBit.Core.Factory;
-using FlitBit.Meta;
 
 namespace FlitBit.Copy
 {
