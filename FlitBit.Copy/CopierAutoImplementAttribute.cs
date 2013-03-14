@@ -1,31 +1,29 @@
 ﻿#region COPYRIGHT© 2009-2013 Phillip Clark. All rights reserved.
+
 // For licensing information see License.txt (MIT style licensing).
+
 #endregion
 
 using System;
-using System.Reflection;
-using FlitBit.Emit;
-using FlitBit.Core.Meta;
 using FlitBit.Core.Factory;
+using FlitBit.Core.Meta;
+using FlitBit.Emit;
 
 namespace FlitBit.Copy
 {
 	/// <summary>
-	/// Used by the framework too wireup copier implementations.
+	///   Used by the framework too wireup copier implementations.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class)]
 	public class CopierAutoImplementAttribute : AutoImplementedAttribute
 	{
 		/// <summary>
-		/// Creates a new instance.
+		///   Creates a new instance.
 		/// </summary>
-		public CopierAutoImplementAttribute()
-		{
-			base.RecommemdedScope = InstanceScopeKind.ContainerScope;
-		}
+		public CopierAutoImplementAttribute() { RecommemdedScope = InstanceScopeKind.ContainerScope; }
 
 		/// <summary>
-		/// Generates an instance of ICopier&lt;,>
+		///   Generates an instance of ICopier&lt;,>
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="factory">the requesting factory</param>
@@ -34,13 +32,13 @@ namespace FlitBit.Copy
 		public override bool GetImplementation<T>(IFactory factory, Action<Type, Func<T>> complete)
 		{
 			var args = typeof(T).GetGenericArguments();
-			Type source = args[0];
-			Type target = args[1];
+			var source = args[0];
+			var target = args[1];
 
 			if (source.IsAnonymousType())
 			{
 				var anon = typeof(AnonymousSourceCopier<,>).MakeGenericType(source, target);
-				complete(null, () => { return (T)Activator.CreateInstance(anon); });
+				complete(null, () => (T) Activator.CreateInstance(anon));
 			}
 			else
 			{

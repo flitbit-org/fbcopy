@@ -1,5 +1,7 @@
 ﻿#region COPYRIGHT© 2009-2013 Phillip Clark. All rights reserved.
+
 // For licensing information see License.txt (MIT style licensing).
+
 #endregion
 
 using System;
@@ -15,14 +17,18 @@ namespace FlitBit.Copy
 {
 	internal static class CopierTypeFactory
 	{
-		static readonly Lazy<EmittedModule> __module = new Lazy<EmittedModule>(() =>
-		{ return RuntimeAssemblies.DynamicAssembly.DefineModule("Copiers", null); },
-			LazyThreadSafetyMode.ExecutionAndPublication
-			);
+		static readonly MethodInfo GenericCreateType = typeof(CopierTypeFactory).GetGenericMethod("ConcreteType",
+																																															BindingFlags.Static | BindingFlags.NonPublic, 0, 2);
 
-		static EmittedModule GeneratedModule { get { return __module.Value; } }
+		static readonly Lazy<EmittedModule> Module =
+			new Lazy<EmittedModule>(() => RuntimeAssemblies.DynamicAssembly.DefineModule("Copiers", null),
+															LazyThreadSafetyMode.ExecutionAndPublication
+				);
 
-		static readonly MethodInfo GenericCreateType = typeof(CopierTypeFactory).GetGenericMethod("ConcreteType", BindingFlags.Static | BindingFlags.NonPublic, 0, 2);
+		static EmittedModule GeneratedModule
+		{
+			get { return Module.Value; }
+		}
 
 		internal static Type ConcreteType(Type sourceType, Type targetType)
 		{
@@ -31,102 +37,62 @@ namespace FlitBit.Copy
 			Contract.Ensures(Contract.Result<Type>() != null);
 
 			var method = GenericCreateType.MakeGenericMethod(sourceType, targetType);
-			return (Type)method.Invoke(null, null);
+			return (Type) method.Invoke(null, null);
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "By design.")]
-		internal static Type ConcreteType<S, T>()
+		internal static Type ConcreteType<TSource, TTarget>()
 		{
 			Contract.Ensures(Contract.Result<Type>() != null);
 
-			var targetType = typeof(ICopier<S, T>);
-			string typeName = RuntimeAssemblies.PrepareTypeName(targetType, "Copier");
+			var targetType = typeof(ICopier<TSource, TTarget>);
+			var typeName = RuntimeAssemblies.PrepareTypeName(targetType, "Copier");
 
 			lock (targetType.GetLockForType())
 			{
 				var module = GeneratedModule;
-				Type type = module.Builder.GetType(typeName, false, false);
-				if (type == null)
-				{
-					type = BuildCopierType<S, T>(module, typeName);
-				}
-				return type;
+				return module.Builder.GetType(typeName, false, false) ?? BuildCopierType<TSource, TTarget>(module, typeName);
 			}
 		}
 
 		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "By design.")]
-		static Type BuildCopierType<S, T>(EmittedModule module, string typeName)
+		static Type BuildCopierType<TSource, TTarget>(EmittedModule module, string typeName)
 		{
 			Contract.Requires(module != null);
 			Contract.Requires(typeName != null);
 			Contract.Requires(typeName.Length > 0);
 			Contract.Ensures(Contract.Result<Type>() != null);
 
-			var builder = module.DefineClass(typeName, EmittedClass.DefaultTypeAttributes, typeof(Copier<S, T>), null);
+			var builder = module.DefineClass(typeName, EmittedClass.DefaultTypeAttributes, typeof(Copier<TSource, TTarget>), null);
 			builder.Attributes = TypeAttributes.Sealed | TypeAttributes.Public | TypeAttributes.BeforeFieldInit;
 
-			ImplementPerformLooseCopy<S, T>(builder);
-			ImplementPerformStrictCopy<S, T>(builder);
+			ImplementPerformLooseCopy<TSource, TTarget>(builder);
+			ImplementPerformStrictCopy<TSource, TTarget>(builder);
 
 			builder.Compile();
 			return builder.Ref.Target;
 		}
 
-		static void ImplementPerformStrictCopy<S, T>(EmittedClass builder)
+		static void ImplementPerformLooseCopy<TSource, TTarget>(EmittedClass builder)
 		{
-			var baseMethod = typeof(Copier<S, T>).GetMethod("PerformStrictCopy", BindingFlags.NonPublic | BindingFlags.Instance);
-			var method = builder.DefineOverrideMethod(baseMethod);
-
-			method.ContributeInstructions((m, il) =>
-			{
-				il.Nop();
-				var props = from src in typeof(S).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-										select new
-										{
-											Source = src,
-											Destination = typeof(T).GetWritablePropertyWithAssignmentCompatablityFromHierarchy(src.Name, BindingFlags.Instance | BindingFlags.Public, src.PropertyType)
-										};
-				if (props.FirstOrDefault(p => p.Destination == null) != null)
-				{
-					il.Nop();
-					il.LoadValue("Cannot perfrom a strict copy because the source and target do not have all the properties in common.");
-					il.New<InvalidOperationException>(typeof(string));
-					il.Throw();
-				}
-				else
-				{
-					foreach (var p in props)
-					{
-						//
-						// result.<property name> = src.<property name>;
-						//
-						il.LoadArg_1();
-						il.LoadArg_2();
-						il.CallVirtual(p.Source.GetGetMethod());
-						il.CallVirtual(p.Destination.GetSetMethod());
-					}
-				}
-			});
-		}
-
-
-		static void ImplementPerformLooseCopy<S, T>(EmittedClass builder)
-		{
-			var baseMethod = typeof(Copier<S, T>).GetMethod("PerformLooseCopy", BindingFlags.NonPublic | BindingFlags.Instance);
+			var baseMethod = typeof(Copier<TSource, TTarget>).GetMethod("PerformLooseCopy",
+																																	BindingFlags.NonPublic | BindingFlags.Instance);
 			var method = builder.DefineOverrideMethod(baseMethod);
 
 			method.ContributeInstructions((m, il) =>
 			{
 				il.Nop();
 
-				foreach (var prop in from src in typeof(S).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-														 join dest in typeof(T).GetWritablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-														 on src.Name equals dest.Name
-														 select new
-														 {
-															 Source = src,
-															 Destination = dest
-														 })
+				foreach (
+					var prop in
+						from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
+						join dest in typeof(TTarget).GetWritablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
+							on src.Name equals dest.Name
+						select new
+						{
+							Source = src,
+							Destination = dest
+						})
 				{
 					if (prop.Destination.PropertyType.IsAssignableFrom(prop.Source.PropertyType))
 					{
@@ -169,6 +135,46 @@ namespace FlitBit.Copy
 				}
 			});
 		}
-	}
 
+		static void ImplementPerformStrictCopy<TSource, TTarget>(EmittedClass builder)
+		{
+			var baseMethod = typeof(Copier<TSource, TTarget>).GetMethod("PerformStrictCopy",
+																																	BindingFlags.NonPublic | BindingFlags.Instance);
+			var method = builder.DefineOverrideMethod(baseMethod);
+
+			method.ContributeInstructions((m, il) =>
+			{
+				il.Nop();
+				var props =
+					(from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
+					select new
+					{
+						Source = src,
+						Destination =
+							typeof(TTarget).GetWritablePropertyWithAssignmentCompatablityFromHierarchy(src.Name,
+																																												BindingFlags.Instance | BindingFlags.Public, src.PropertyType)
+					}).ToArray();
+				if (props.FirstOrDefault(p => p.Destination == null) != null)
+				{
+					il.Nop();
+					il.LoadValue("Cannot perfrom a strict copy because the source and target do not have all properties in common.");
+					il.New<InvalidOperationException>(typeof(string));
+					il.Throw();
+				}
+				else
+				{
+					foreach (var p in props)
+					{
+						//
+						// result.<property name> = src.<property name>;
+						//
+						il.LoadArg_1();
+						il.LoadArg_2();
+						il.CallVirtual(p.Source.GetGetMethod());
+						il.CallVirtual(p.Destination.GetSetMethod());
+					}
+				}
+			});
+		}
+	}
 }
