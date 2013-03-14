@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\AbductedPerson.cs" />
+    <Compile Include="Models\NumberedThings.cs" />
     <Compile Include="Models\OtherPerson.cs" />
     <Compile Include="Models\MissingPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

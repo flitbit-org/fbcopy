@@ -128,8 +128,7 @@ namespace FlitBit.Copy.Tests
 			}
 		}
 
-		[TestMethod, ExpectedException(typeof(InvalidOperationException))]
-		
+		[TestMethod, ExpectedException(typeof(InvalidOperationException))] 
 		public void CopierOfT_ExceptionOnStrictCopyWhenTypesAreDissimilar()
 		{
 			var sources = new[]
@@ -160,6 +159,344 @@ namespace FlitBit.Copy.Tests
 				copier.StrictCopy(missing, sources[i]);
 				Assert.Fail("Should have blown up with an InvalidOperationException");
 			}
+		}
+
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Nine()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+				Six = new { Six = DateTime.Now },
+				Seven = new NumberedThings7 { Seven = gen.GetGuid() },
+				Eight = new NumberedThings8 { Eight = gen.GetInt64() },
+				Nine = new NumberedThings9 { Nine = gen.GetInt16() }
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five, sources.Six, sources.Seven, sources.Eight, sources.Nine);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(sources.Six.Six, num.Six);
+			Assert.AreEqual(sources.Seven.Seven, num.Seven);
+			Assert.AreEqual(sources.Eight.Eight, num.Eight);
+			Assert.AreEqual(sources.Nine.Nine, num.Nine);
+		}
+
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Eight()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+				Six = new NumberedThings6 { Six = DateTime.Now },
+				Seven = new NumberedThings7 { Seven = gen.GetGuid() },
+				Eight = new NumberedThings8 { Eight = gen.GetInt64() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five, sources.Six, sources.Seven, sources.Eight);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(sources.Six.Six, num.Six);
+			Assert.AreEqual(sources.Seven.Seven, num.Seven);
+			Assert.AreEqual(sources.Eight.Eight, num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Seven()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+				Six = new NumberedThings6 { Six = DateTime.Now },
+				Seven = new NumberedThings7 { Seven = gen.GetGuid() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five, sources.Six, sources.Seven);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(sources.Six.Six, num.Six);
+			Assert.AreEqual(sources.Seven.Seven, num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Six()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new { Five = gen.GetDouble() },
+				Six = new NumberedThings6 { Six = DateTime.Now },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five, sources.Six);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(sources.Six.Six, num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Five()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Four()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(default(double), num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Three()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(default(decimal), num.Four);
+			Assert.AreEqual(default(double), num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne2Two()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(default(int), num.Three);
+			Assert.AreEqual(default(decimal), num.Four);
+			Assert.AreEqual(default(double), num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanCopySourcesOne()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) }
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(default(byte), num.Two);
+			Assert.AreEqual(default(int), num.Three);
+			Assert.AreEqual(default(decimal), num.Four);
+			Assert.AreEqual(default(double), num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(default(long), num.Eight);
+			Assert.AreEqual(default(short), num.Nine);
+		}
+		[TestMethod]
+		public void Copier_CanPartialFillFromDifferentSources()
+		{
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				Four = new NumberedThings4 { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+				Eight = new NumberedThings8 { Eight = gen.GetInt64() },
+				Nine = new NumberedThings9 { Nine = gen.GetInt16() }
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.Four, sources.Five, sources.Eight, sources.Nine);
+			Assert.IsNotNull(num);
+			// Four, Five, Eight and Nine should have been copied from the different objects...
+			Assert.AreEqual(default(string), num.One);
+			Assert.AreEqual(default(byte), num.Two);
+			Assert.AreEqual(default(int), num.Three);
+			Assert.AreEqual(sources.Four.Four, num.Four);
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(default(Guid), num.Seven);
+			Assert.AreEqual(sources.Eight.Eight, num.Eight);
+			Assert.AreEqual(sources.Nine.Nine, num.Nine);
+		}						
+
+		[TestMethod]
+		public void Copier_CopyRespectsLastSourceWritten()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Seven = new NumberedThings7 { Seven = gen.GetGuid() },
+				Eight = new NumberedThings8 { Eight = gen.GetInt64() },
+				Nine = new NumberedThings9 { Nine = gen.GetInt16() },
+				Nine1 = new NumberedThings9 { Nine = gen.GetInt16() },
+				Nine2 = new NumberedThings9 { Nine = gen.GetInt16() },
+				Nine3 = new NumberedThings9 { Nine = gen.GetInt16() },
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings123456789>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Seven, sources.Eight, sources.Nine, sources.Nine1, sources.Nine2, sources.Nine3);
+			Assert.IsNotNull(num);
+
+			// The Nines overwrite eachother, the last one given will set the value...
+			Assert.AreEqual(sources.One.One, num.One);
+			Assert.AreEqual(sources.Two.Two, num.Two);
+			Assert.AreEqual(sources.Three.Three, num.Three);
+			Assert.AreEqual(default(Decimal), num.Four);
+			Assert.AreEqual(default(double), num.Five);
+			Assert.AreEqual(default(DateTime), num.Six);
+			Assert.AreEqual(sources.Seven.Seven, num.Seven);
+			Assert.AreEqual(sources.Eight.Eight, num.Eight);
+			Assert.AreEqual(sources.Nine3.Nine, num.Nine);
+		}
+
+		[TestMethod]
+		public void Copier_CanOverfillSmallerObject()
+		{
+			var ran = new Random(Environment.TickCount);
+			var gen = new DataGenerator();
+			var sources = new
+			{
+				One = new NumberedThings1 { One = gen.GetString(ran.Next(20, 200)) },
+				Two = new NumberedThings2 { Two = gen.GetByte() },
+				Three = new NumberedThings3 { Three = gen.GetInt32() },
+				Four = new { Four = gen.GetDecimal() },
+				Five = new NumberedThings5 { Five = gen.GetDouble() },
+				Six = new NumberedThings6 { Six = DateTime.Now },
+				Seven = new NumberedThings7 { Seven = gen.GetGuid() },
+				Eight = new NumberedThings8 { Eight = gen.GetInt64() },
+				Nine = new NumberedThings9 { Nine = gen.GetInt16() }
+			};
+			var factory = FactoryProvider.Factory;
+			var num = Copier<NumberedThings567>.CopyEachSource(factory, sources.One, sources.Two, sources.Three,
+																																	sources.Four, sources.Five, sources.Six, sources.Seven, sources.Eight, sources.Nine);
+			Assert.IsNotNull(num);
+			// Each of the properties should have been copied from the different objects...
+			Assert.AreEqual(sources.Five.Five, num.Five);
+			Assert.AreEqual(sources.Six.Six, num.Six);
+			Assert.AreEqual(sources.Seven.Seven, num.Seven);
 		}
 	}
 }
