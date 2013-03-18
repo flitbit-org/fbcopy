@@ -20,7 +20,10 @@ namespace FlitBit.Copy
 		/// <summary>
 		///   Creates a new instance.
 		/// </summary>
-		public CopierAutoImplementAttribute() { RecommemdedScope = InstanceScopeKind.ContainerScope; }
+		public CopierAutoImplementAttribute()
+		{
+			RecommemdedScope = InstanceScopeKind.ContainerScope;
+		}
 
 		/// <summary>
 		///   Generates an instance of ICopier&lt;,>

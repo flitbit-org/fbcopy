@@ -25,10 +25,7 @@ namespace FlitBit.Copy
 															LazyThreadSafetyMode.ExecutionAndPublication
 				);
 
-		static EmittedModule GeneratedModule
-		{
-			get { return Module.Value; }
-		}
+		static EmittedModule GeneratedModule { get { return Module.Value; } }
 
 		internal static Type ConcreteType(Type sourceType, Type targetType)
 		{

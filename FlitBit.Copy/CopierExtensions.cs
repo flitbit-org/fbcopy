@@ -36,7 +36,10 @@ namespace FlitBit.Copy
 		/// <typeparam name="TTarget"></typeparam>
 		/// <returns></returns>
 		public static TTarget LooseCopy<TSource, TTarget>(this ICopier<TSource, TTarget> copier, TTarget target,
-			TSource source) { return LooseCopy(copier, target, source, FactoryProvider.Factory); }
+			TSource source)
+		{
+			return LooseCopy(copier, target, source, FactoryProvider.Factory);
+		}
 
 		/// <summary>
 		///   Makes a strict copy of source to target.
@@ -68,7 +71,10 @@ namespace FlitBit.Copy
 		/// <typeparam name="TTarget"></typeparam>
 		/// <returns></returns>
 		public static TTarget StrictCopy<TSource, TTarget>(this ICopier<TSource, TTarget> copier, TTarget target,
-			TSource source) { return StrictCopy(copier, target, source, FactoryProvider.Factory); }
+			TSource source)
+		{
+			return StrictCopy(copier, target, source, FactoryProvider.Factory);
+		}
 
 		/// <summary>
 		///   Makes a strict copy of source to target.

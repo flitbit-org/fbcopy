@@ -122,6 +122,7 @@
     <Compile Include="CopierAutoImplementAttribute.cs" />
     <Compile Include="CopierExtensions.cs" />
     <Compile Include="CopierTypeFactory.cs" />
+    <Compile Include="Extensions.T.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ICopier.S.T.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
