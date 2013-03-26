@@ -22,7 +22,7 @@ namespace FlitBit.Copy
 	/// </summary>
 	/// <typeparam name="TTarget"></typeparam>
 	public static class Copier<TTarget>
-	{	
+	{
 		/// <summary>
 		///   Copies source's properties to a new instance of target type TTarget.
 		/// </summary>
@@ -52,7 +52,7 @@ namespace FlitBit.Copy
 			var cloneable = source as ICloneable;
 			if (cloneable != null && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
-				return (TTarget)cloneable.Clone();
+				return (TTarget) cloneable.Clone();
 			}
 			var copier = factory.CreateInstance<ICopier<TSource, TTarget>>();
 			var res = factory.CreateInstance<TTarget>();
@@ -72,7 +72,7 @@ namespace FlitBit.Copy
 			if (cloneable && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
 				return (from s in sources
-								select ((ICloneable)s).Clone()).Cast<TTarget>();
+								select ((ICloneable) s).Clone()).Cast<TTarget>();
 			}
 			return CopyConstructAll(sources, FactoryProvider.Factory);
 		}

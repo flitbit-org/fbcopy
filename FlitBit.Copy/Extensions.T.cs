@@ -20,11 +20,11 @@ namespace FlitBit.Copy
 		/// <param name="target">the target</param>
 		/// <typeparam name="TSource">source type TSource</typeparam>
 		/// <typeparam name="TTarget">target type TTarget</typeparam>
-		/// <returns>the source object.</returns>
-		public static TSource CopyTo<TSource, TTarget>(this TSource source, TTarget target)
+		/// <returns>the target object.</returns>
+		public static TTarget CopyFrom<TTarget, TSource>(this TTarget target, TSource source)
 		{
 			Copier<TTarget>.LooseCopyTo(target, source, FactoryProvider.Factory);
-			return source;
+			return target;
 		}
 
 		/// <summary>
@@ -34,11 +34,11 @@ namespace FlitBit.Copy
 		/// <param name="target">the target</param>
 		/// <typeparam name="TSource">source type TSource</typeparam>
 		/// <typeparam name="TTarget">target type TTarget</typeparam>
-		/// <returns>the target object.</returns>
-		public static TTarget CopyFrom<TTarget, TSource>(this TTarget target, TSource source)
+		/// <returns>the source object.</returns>
+		public static TSource CopyTo<TSource, TTarget>(this TSource source, TTarget target)
 		{
 			Copier<TTarget>.LooseCopyTo(target, source, FactoryProvider.Factory);
-			return target;
+			return source;
 		}
 	}
 }

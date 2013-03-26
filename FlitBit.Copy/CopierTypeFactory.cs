@@ -17,8 +17,8 @@ namespace FlitBit.Copy
 {
 	internal static class CopierTypeFactory
 	{
-		static readonly MethodInfo GenericCreateType = typeof(CopierTypeFactory).GetGenericMethod("ConcreteType",
-																																															BindingFlags.Static | BindingFlags.NonPublic, 0, 2);
+		static readonly MethodInfo GenericCreateType = typeof(CopierTypeFactory).MatchGenericMethod("ConcreteType",
+																																																BindingFlags.Static | BindingFlags.NonPublic, 2, typeof(Type));
 
 		static readonly Lazy<EmittedModule> Module =
 			new Lazy<EmittedModule>(() => RuntimeAssemblies.DynamicAssembly.DefineModule("Copiers", null),
@@ -78,8 +78,6 @@ namespace FlitBit.Copy
 
 			method.ContributeInstructions((m, il) =>
 			{
-				il.Nop();
-
 				foreach (
 					var prop in
 						from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
@@ -100,7 +98,6 @@ namespace FlitBit.Copy
 						il.LoadArg_2();
 						il.CallVirtual(prop.Source.GetGetMethod());
 						il.CallVirtual(prop.Destination.GetSetMethod());
-						il.Nop();
 					}
 					//else if (!prop.Destination.PropertyType.IsValueType
 					//  && !prop.Source.PropertyType.IsValueType)
@@ -127,7 +124,7 @@ namespace FlitBit.Copy
 					//  il.LoadValue(CopyKind.Loose);
 					//  il.Call(typeof(ICopierExtensions).GetGenericMethod("Copy", 4, 2).MakeGenericMethod(prop.Source.PropertyType, prop.Destination.PropertyType));
 					//  il.CallVirtual(prop.Destination.GetSetMethod());
-					//  il.Nop();
+					//  
 					//}
 				}
 			});
@@ -141,7 +138,6 @@ namespace FlitBit.Copy
 
 			method.ContributeInstructions((m, il) =>
 			{
-				il.Nop();
 				var props =
 					(from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
 					select new
@@ -153,7 +149,6 @@ namespace FlitBit.Copy
 					}).ToArray();
 				if (props.FirstOrDefault(p => p.Destination == null) != null)
 				{
-					il.Nop();
 					il.LoadValue("Cannot perfrom a strict copy because the source and target do not have all properties in common.");
 					il.New<InvalidOperationException>(typeof(string));
 					il.Throw();
