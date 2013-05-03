@@ -10,7 +10,7 @@
     <projectUrl>http://fbcopy.codeplex.com/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added extensions and utility methods. See release notes on CodePlex.</releaseNotes>
+    <releaseNotes>Updated for compatability with FlitBit.Core v2.11s.</releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
 </package>
