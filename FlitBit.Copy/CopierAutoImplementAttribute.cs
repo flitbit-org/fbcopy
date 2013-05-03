@@ -34,14 +34,35 @@ namespace FlitBit.Copy
 		/// <returns></returns>
 		public override bool GetImplementation<T>(IFactory factory, Action<Type, Func<T>> complete)
 		{
-			var args = typeof(T).GetGenericArguments();
+			return GetImplementation(factory, typeof(T), (type, functor) =>
+			{
+				if (type != null) complete(type, null);
+				else complete(null, () => (T) functor());
+			});
+		}
+
+		/// <summary>
+		/// Gets the implementation for type
+		/// </summary>
+		/// <param name="factory">the factory from which the type was requested.</param><param name="type">the target types</param><param name="complete">callback invoked when the implementation is available</param>
+		/// <returns>
+		/// <em>true</em> if implemented; otherwise <em>false</em>.
+		/// </returns>
+		/// <exception cref="T:System.ArgumentException">thrown if <paramref name="type"/> is not eligible for implementation</exception>
+		/// <remarks>
+		/// If the <paramref name="complete"/> callback is invoked, it must be given either an implementation type
+		///               assignable to type T, or a factory function that creates implementations of type T.
+		/// </remarks>
+		public override bool GetImplementation(IFactory factory, Type type, Action<Type, Func<object>> complete)
+		{
+			var args = type.GetGenericArguments();
 			var source = args[0];
 			var target = args[1];
 
 			if (source.IsAnonymousType())
 			{
 				var anon = typeof(AnonymousSourceCopier<,>).MakeGenericType(source, target);
-				complete(null, () => (T) Activator.CreateInstance(anon));
+				complete(null, () => Activator.CreateInstance(anon));
 			}
 			else
 			{
