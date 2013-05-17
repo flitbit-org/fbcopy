@@ -432,7 +432,7 @@ namespace FlitBit.Copy
 
 				var props =
 					(from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-					join dest in typeof(TTarget).GetWritableProperties(BindingFlags.Instance | BindingFlags.Public)
+					join dest in typeof(TTarget).GetWritablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
 						on src.Name equals dest.Name
 					select new
 					{
