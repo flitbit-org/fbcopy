@@ -1,4 +1,5 @@
-﻿using FlitBit.Core;
+﻿using FlitBit.Copy.Tests.Models;
+using FlitBit.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FlitBit.Copy.Tests
@@ -13,17 +14,17 @@ namespace FlitBit.Copy.Tests
 			const int age = 30;
 			const float weight = 170.5f;
 
-			IHuman human = new Human();
-			Copier<IHuman>.LooseCopyTo(human, new
+			IPerson person = new Person();
+			Copier<IPerson>.LooseCopyTo(person, new
 			{
 				Name = name,
 				Age = age,
 				Weight = weight
 			}, FactoryProvider.Factory);
 
-			Assert.AreEqual(name, human.Name);
-			Assert.AreEqual(age, human.Age);
-			Assert.AreEqual(weight, human.Weight);
+			Assert.AreEqual(name, person.Name);
+			Assert.AreEqual(age, person.Age);
+			Assert.AreEqual(weight, person.Weight);
 		}
 
 		[TestMethod]
@@ -60,8 +61,8 @@ namespace FlitBit.Copy.Tests
 			const float weight = 170.5f;
 			const bool isSneaky = true;
 
-			ISneakyHuman sneakyHuman = new SneakyHuman();
-			Copier<ISneakyHuman>.LooseCopyTo(sneakyHuman, new
+			ISneakyPerson sneakyPerson = new SneakyPerson();
+			Copier<ISneakyPerson>.LooseCopyTo(sneakyPerson, new
 			{
 				Name = name,
 				Age = age,
@@ -69,64 +70,20 @@ namespace FlitBit.Copy.Tests
 				IsSneaky = isSneaky
 			}, FactoryProvider.Factory);
 
-			Assert.AreEqual(name, sneakyHuman.Name);
-			Assert.AreEqual(age, sneakyHuman.Age);
-			Assert.AreEqual(weight, sneakyHuman.Weight);
-			Assert.IsTrue(sneakyHuman.IsSneaky);
+			Assert.AreEqual(name, sneakyPerson.Name);
+			Assert.AreEqual(age, sneakyPerson.Age);
+			Assert.AreEqual(weight, sneakyPerson.Weight);
+			Assert.IsTrue(sneakyPerson.IsSneaky);
 		}
 
 		[TestInitialize]
 		public void Init()
 		{
-			FactoryProvider.Factory.RegisterImplementationType<IHuman, Human>();
-			FactoryProvider.Factory.RegisterImplementationType<ISneakyHuman, SneakyHuman>();
+			FactoryProvider.Factory.RegisterImplementationType<IPerson, Person>();
+			FactoryProvider.Factory.RegisterImplementationType<ISneakyPerson, SneakyPerson>();
 			FactoryProvider.Factory.RegisterImplementationType<INinja, Ninja>();
 		}
 	}
 
-	public interface IHuman
-	{
-		int Age { get; set; }
-		string Name { get; set; }
-		float Weight { get; set; }
-	}
-
-	public class Human : IHuman
-	{
-		#region IHuman Members
-
-		public string Name { get; set; }
-		public int Age { get; set; }
-		public float Weight { get; set; }
-
-		#endregion
-	}
-
-	public interface ISneakyHuman : IHuman
-	{
-		bool IsSneaky { get; set; }
-	}
-
-	public class SneakyHuman : Human, ISneakyHuman
-	{
-		#region ISneakyHuman Members
-
-		public bool IsSneaky { get; set; }
-
-		#endregion
-	}
-
-	public interface INinja : ISneakyHuman
-	{
-		int Rank { get; set; }
-	}
-
-	public class Ninja : SneakyHuman, INinja
-	{
-		#region INinja Members
-
-		public int Rank { get; set; }
-
-		#endregion
-	}
+	
 }

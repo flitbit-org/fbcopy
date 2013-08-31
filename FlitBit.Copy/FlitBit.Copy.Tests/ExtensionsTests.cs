@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-using FlitBit.Copy.Tests.Models;
+﻿using FlitBit.Copy.Tests.Models;
 using FlitBit.Core;
+using FlitBit.Wireup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FlitBit.Copy.Tests
@@ -9,6 +8,66 @@ namespace FlitBit.Copy.Tests
 	[TestClass]
 	public class ExtensionsTests
 	{
+		[TestInitialize]
+		public void Init()
+		{
+			WireupCoordinator.SelfConfigure();
+			FactoryProvider.Factory.RegisterImplementationType<IPerson, Person>();
+			FactoryProvider.Factory.RegisterImplementationType<ISneakyPerson, SneakyPerson>();
+			FactoryProvider.Factory.RegisterImplementationType<INinja, Ninja>();
+		}
+
+		[TestMethod]
+		public void Extensions_CanCopyFrom_InterfaceFromInterface()
+		{
+			var factory = FactoryProvider.Factory;
+
+			var person = factory.CreateInstance<IPerson>();
+			person.Name = "Bob";
+			person.Age = 3;
+
+			//System.ArgumentException: Invalid type owner for DynamicMethod.
+			var otherBob = person.CopyFrom(person);
+			Assert.AreEqual(person.Name, otherBob.Name);
+			Assert.AreEqual(person.Age, otherBob.Age);
+		}
+
+		[TestMethod]
+		public void Extensions_CanCopyTo_InterfaceToInterface()
+		{
+			var factory = FactoryProvider.Factory;
+
+			var person = factory.CreateInstance<IPerson>();
+			person.Name = "Bob";
+			person.Age = 31;
+
+			//System.ArgumentException: Invalid type owner for DynamicMethod.
+			var otherBob = factory.CreateInstance<IPerson>();
+			person.CopyTo(otherBob);
+
+			Assert.AreEqual(person.Name, otherBob.Name);
+			Assert.AreEqual(person.Age, otherBob.Age);
+		}
+
+		[TestMethod]
+		public void Extensions_CanCopyTo_ConcreteToInterface()
+		{
+			var factory = FactoryProvider.Factory;
+
+			var person = new Person()
+			{
+				Name = "Bob",
+				Age = 31
+			};
+
+			//System.ArgumentException: Invalid type owner for DynamicMethod.
+			var otherBob = factory.CreateInstance<IPerson>();
+			person.CopyTo(otherBob);
+
+			Assert.AreEqual(person.Name, otherBob.Name);
+			Assert.AreEqual(person.Age, otherBob.Age);
+		}
+
 		[TestMethod]
 		public void Extensions_CanCopyFrom()
 		{
@@ -87,6 +146,20 @@ namespace FlitBit.Copy.Tests
 				Assert.AreEqual(sources[i].Description, missing.Description);
 				Assert.AreNotEqual(sources[i].YearLastSeen, missing.YearAbducted);
 			}
+		}
+
+		[TestMethod]
+		public void Extensions_CanCopyConstruct_InterfaceToInterface()
+		{
+			var factory = FactoryProvider.Factory;
+			var copier = factory.CreateInstance<ICopier<INinja, IPerson>>();
+			var ninja = new Ninja {Age = 5, IsSneaky = true, Name = "Sneeks", Rank = 5, Weight = 154};
+			var copy = copier.CopyConstruct(ninja);
+			Assert.IsInstanceOfType(copy, typeof (IPerson));
+			Assert.IsNotInstanceOfType(copy, typeof (INinja));
+			Assert.AreEqual(ninja.Name, copy.Name);
+			Assert.AreEqual(ninja.Age, copy.Age);
+			Assert.AreEqual(ninja.Weight, copy.Weight);
 		}
 	}
 }
