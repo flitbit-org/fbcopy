@@ -10,7 +10,7 @@
     <projectUrl>http://fbcopy.codeplex.com/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Updated for compatability with FlitBit.Core v2.11s.</releaseNotes>
+    <releaseNotes>Fixed CopyTo/From extensions to work when source object is interface.</releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
 </package>
