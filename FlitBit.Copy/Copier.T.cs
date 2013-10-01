@@ -18,11 +18,6 @@ using FlitBit.Emit;
 
 namespace FlitBit.Copy
 {
-	internal abstract class CopyHelper
-	{
-		internal abstract void UntypedLooseCopyTo(object target, object source, IFactory factory);
-	}
-
 	/// <summary>
 	///   Static copier used with anonymous/closed types.
 	/// </summary>
@@ -40,7 +35,7 @@ namespace FlitBit.Copy
 			var cloneable = source as ICloneable;
 			if (cloneable != null && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
-				return (TTarget) cloneable.Clone();
+				return (TTarget)cloneable.Clone();
 			}
 			return CopyConstruct(source, FactoryProvider.Factory);
 		}
@@ -58,7 +53,7 @@ namespace FlitBit.Copy
 			var cloneable = source as ICloneable;
 			if (cloneable != null && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
-				return (TTarget) cloneable.Clone();
+				return (TTarget)cloneable.Clone();
 			}
 			var copier = factory.CreateInstance<ICopier<TSource, TTarget>>();
 			var res = factory.CreateInstance<TTarget>();
@@ -78,7 +73,7 @@ namespace FlitBit.Copy
 			if (cloneable && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
 				return (from s in sources
-								select ((ICloneable) s).Clone()).Cast<TTarget>();
+						select ((ICloneable)s).Clone()).Cast<TTarget>();
 			}
 			return CopyConstructAll(sources, FactoryProvider.Factory);
 		}
@@ -97,10 +92,10 @@ namespace FlitBit.Copy
 			if (cloneable && typeof(TTarget).IsAssignableFrom(typeof(TSource)))
 			{
 				return (from s in sources
-								select ((ICloneable) s).Clone()).Cast<TTarget>();
+						select ((ICloneable)s).Clone()).Cast<TTarget>();
 			}
 			return from s in sources
-						select CopyConstruct(s, factory);
+				   select CopyConstruct(s, factory);
 		}
 
 		/// <summary>
@@ -407,95 +402,17 @@ namespace FlitBit.Copy
 		{
 			Contract.Requires<ArgumentNullException>(factory != null);
 
-			var sourceType = source.GetType();
-			var sourceKey = sourceType.GetKeyForType();
-			var helper = Helpers.GetOrAdd(sourceKey, k =>
+			if (factory.CanConstruct<ICopier<TSource, TTarget>>())
 			{
-				var helperType = typeof (LooseCopyHelper<>).MakeGenericType(typeof(TTarget), sourceType);
-				return (CopyHelper) Activator.CreateInstance(helperType);
-			});
-			helper.UntypedLooseCopyTo(target, source, factory);
+				var copier = factory.CreateInstance<ICopier<TSource, TTarget>>();
+				copier.CopyTo(target, source, CopyKind.Loose, factory);
+			}
+			else
+			{
+				CopyHelper<TTarget>.LooseCopyTo(target, source, factory);
+			}
 		}
 
-// ReSharper disable once StaticFieldInGenericType
-		private static readonly ConcurrentDictionary<object, CopyHelper> Helpers = new ConcurrentDictionary<object, CopyHelper>();
-
-		class LooseCopyHelper<TSource> : CopyHelper
-		{
-			static Action<TTarget, TSource, IFactory> GeneratePerformLooseCopy()
-			{
-				var targetType = typeof(TTarget);
-				var method = new DynamicMethod(String.Concat("LooseCopyTo", targetType.Name)
-																			, MethodAttributes.Public | MethodAttributes.Static
-																			, CallingConventions.Standard
-																			, null
-																			, new[] { typeof(TTarget), typeof(TSource), typeof(IFactory) }
-																			, typeof(TSource)
-																			, false
-					);
-				var il = method.GetILGenerator();
-				il.DeclareLocal(typeof(TSource));
-
-				il.Nop();
-
-				var props =
-					(from src in typeof(TSource).GetReadablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-					 join dest in typeof(TTarget).GetWritablePropertiesFromHierarchy(BindingFlags.Instance | BindingFlags.Public)
-						 on src.Name equals dest.Name
-					 select new
-					 {
-						 Source = src,
-						 Destination = dest
-					 }).ToArray();
-				foreach (var prop in props)
-				{
-					if (!prop.Destination.PropertyType.IsAssignableFrom(prop.Source.PropertyType)) continue;
-					//
-					// target.<property-name> = src.<property-name>;
-					//
-					il.LoadArg_0();
-					il.LoadArg_1();
-					var getter = prop.Source.GetGetMethod();
-					var declaringType = getter.DeclaringType;
-					if (getter.IsVirtual || (declaringType != null && declaringType.IsInterface))
-					{
-						il.CallVirtual(getter);
-					}
-					else
-					{
-						il.Call(getter);
-					}
-
-					var setter = prop.Destination.GetSetMethod();
-					declaringType = setter.DeclaringType;
-					if (setter.IsVirtual || (declaringType != null && declaringType.IsInterface))
-					{
-						il.CallVirtual(setter);
-					}
-					else
-					{
-						il.Call(setter);
-					}
-
-					il.Nop();
-					//else if (prop.Destination.PropertyType.IsDefined(typeof(ModelAttribute), false))
-					//{
-
-					//}
-				}
-				il.Return();
-
-				// Create the delegate
-				return (Action<TTarget, TSource, IFactory>)method.CreateDelegate(typeof(Action<TTarget, TSource, IFactory>));
-			}
-
-			internal override void UntypedLooseCopyTo(object target, object source, IFactory factory)
-			{
-				_looseCopy.Value((TTarget)target, (TSource)source, factory);
-			}
-
-			readonly Lazy<Action<TTarget, TSource, IFactory>> _looseCopy = new Lazy<Action<TTarget, TSource, IFactory>>(
-				GeneratePerformLooseCopy, LazyThreadSafetyMode.ExecutionAndPublication);
-		}
+		
 	}
 }

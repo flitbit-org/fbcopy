@@ -120,6 +120,7 @@
     <Compile Include="CopierTypeFactory.cs" />
     <Compile Include="Extensions.T.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="ICopier.S.T.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
