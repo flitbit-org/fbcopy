@@ -4,17 +4,12 @@
 
 #endregion
 
+using FlitBit.Core;
+using FlitBit.Core.Factory;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Threading;
-using FlitBit.Core;
-using FlitBit.Core.Factory;
-using FlitBit.Emit;
 
 namespace FlitBit.Copy
 {

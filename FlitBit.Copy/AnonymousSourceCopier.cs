@@ -5,13 +5,7 @@
 #endregion
 
 using FlitBit.Core.Factory;
-using FlitBit.Emit;
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Threading;
 
 namespace FlitBit.Copy
 {
