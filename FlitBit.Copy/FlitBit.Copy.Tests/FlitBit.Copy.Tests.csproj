@@ -35,13 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FlitBit.Core, Version=2.11.3.0, Culture=neutral, PublicKeyToken=38f03d0878531ff3, processorArchitecture=MSIL">
+    <Reference Include="FlitBit.Core, Version=2.11.4.0, Culture=neutral, PublicKeyToken=38f03d0878531ff3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\FlitBit.Core.2.11.3\lib\net40\FlitBit.Core.dll</HintPath>
+      <HintPath>..\..\packages\FlitBit.Core.2.11.4\lib\net40\FlitBit.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FlitBit.Emit, Version=2.8.5.0, Culture=neutral, PublicKeyToken=38f03d0878531ff3, processorArchitecture=MSIL">
+    <Reference Include="FlitBit.Emit, Version=2.8.6.0, Culture=neutral, PublicKeyToken=38f03d0878531ff3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\FlitBit.Emit.2.8.5\lib\net40\FlitBit.Emit.dll</HintPath>
+      <HintPath>..\..\packages\FlitBit.Emit.2.8.6\lib\net40\FlitBit.Emit.dll</HintPath>
     </Reference>
     <Reference Include="FlitBit.Wireup">
       <HintPath>..\..\packages\FlitBit.Wireup.3.0.3\lib\net40\FlitBit.Wireup.dll</HintPath>
