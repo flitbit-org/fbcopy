@@ -11,7 +11,6 @@ namespace FlitBit.Copy.Tests
 		[TestInitialize]
 		public void Init()
 		{
-			WireupCoordinator.SelfConfigure();
 			FactoryProvider.Factory.RegisterImplementationType<IPerson, Person>();
 			FactoryProvider.Factory.RegisterImplementationType<ISneakyPerson, SneakyPerson>();
 			FactoryProvider.Factory.RegisterImplementationType<INinja, Ninja>();

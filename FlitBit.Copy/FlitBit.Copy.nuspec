@@ -6,11 +6,11 @@
     <title>$title$</title>
     <authors>Phillip Clark</authors>
     <owners>flitbit.org</owners>
-    <licenseUrl>http://fbcopy.codeplex.com/license</licenseUrl>
-    <projectUrl>http://fbcopy.codeplex.com/</projectUrl>
+    <licenseUrl>https://github.com/flitbit-org/fbcopy/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/flitbit-org/fbcopy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Fixed CopyTo/From extensions to work when source object is interface.</releaseNotes>
+    <releaseNotes>Moved repository to github.</releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
 </package>
