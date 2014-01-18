@@ -52,7 +52,7 @@ namespace FlitBit.Copy.Tests
 				new MissingPerson
 				{
 					Name = "Antonio Villas Boas",
-					Description = "Brazilian farmer abducted while whorking at night near Sao Francisco de Sales.",
+					Description = "Brazilian farmer abducted while working at night near Sao Francisco de Sales.",
 					YearLastSeen = "1957"
 				},
 				new MissingPerson
