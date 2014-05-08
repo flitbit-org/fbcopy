@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/flitbit-org/fbcopy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Moved repository to github.</releaseNotes>
-    <copyright>Copyright 2013</copyright>
+    <releaseNotes>Updated to Core 3.2 and Emit 3.0.</releaseNotes>
+    <copyright>COPYRIGHT© 2009-2014 Phillip Clark. All rights reserved.</copyright>
   </metadata>
 </package>
